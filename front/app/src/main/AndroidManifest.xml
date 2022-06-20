@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.akane.scarletserenity">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".controller.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".controller.character.CharacterActivity">
+        </activity>
+
+        <activity android:name=".controller.once.CreateCharacterActivity">
+        </activity>
+
+        <activity android:name=".controller.once.QuizActivity">
+        </activity>
+
+        <activity android:name=".controller.once.SynopsisActivity">
+        </activity>
+
+        <activity android:name=".controller.character.MainCharacterActivity">
+        </activity>
+
+        <activity android:name=".controller.multi.ChatActivity">
+        </activity>
+
+        <activity android:name=".controller.multi.LobbyActivity">
+        </activity>
+
+        <activity android:name=".controller.BaseActivity" />
+
+        <activity android:name=".controller.multi.LobbyMultiActivity" />
+
+        <activity android:name=".controller.multi.ShifumiActivity"
+                  android:launchMode = "singleTop"/>
+
+        <activity android:name=".controller.once.SpeechActivity" />
+
+        <activity android:name=".controller.once.BestiaireActivity" />
+
+        <activity android:name=".controller.vote.CreateVoteActivity" />
+
+        <activity android:name=".controller.vote.PurposeActivity" />
+
+        <activity android:name=".controller.vote.ParticipateVoteLobbyActivity" />
+
+        <activity android:name=".controller.vote.VoteMainActivity" />
+
+        <activity android:name=".controller.vote.ParticipateVote" />
+
+        <activity android:name=".controller.character.ProfilCharacterActivity" />
+
+        <activity android:name=".controller.world.WorldActivity" />
+
+        <activity android:name=".controller.vote.AdminVote" />
+
+
+
+<!--        android:name="preloaded_fonts"-->
+
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5757978924877335~3491809212"/>
+
+    </application>
+
+</manifest>
