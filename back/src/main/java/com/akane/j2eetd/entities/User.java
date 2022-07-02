@@ -1,5 +1,6 @@
 package com.akane.j2eetd.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -15,14 +16,14 @@ public class User {
     @Column(name = "username") @Id @NotEmpty
     String username;
     @Column
-    @JsonIgnore
+   // @JsonIgnore
     private String password;
     @Column
     private String role;
 
     @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "charactergame_pseudo", referencedColumnName = "pseudo")
-    @JsonIgnore
+    @JoinColumn(name = "charactergame_pseudo")
+    @JsonBackReference
     private Charactergame charactergame;
 
     public String getUsername() {

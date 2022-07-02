@@ -23,12 +23,16 @@ public class CharactergameService {
         return charactergameRepository.save(charactergame);
     }
 
-    public List<Charactergame> getCharactergame() {
+    public List<Charactergame> getAllCharactergames() {
         return charactergameRepository.findAll();
     }
 
     public Charactergame getCharactergameByPseudo(String pseudo) {
         return charactergameRepository.findById(pseudo).orElse(null);
+    }
+
+    public Charactergame getCharactergameByUser(String username) {
+        return charactergameRepository.checkUserCharacterGame(username);
     }
 
     public void deleteCharactergameByPseudo(String pseudo) {

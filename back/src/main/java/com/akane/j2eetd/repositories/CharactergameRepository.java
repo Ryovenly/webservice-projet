@@ -14,6 +14,9 @@ import javax.transaction.Transactional;
 @Repository
 public interface CharactergameRepository extends JpaRepository<Charactergame,String> {
 
+    @Query("SELECT c FROM Charactergame c where c.user.username = ?1")
+    Charactergame checkUserCharacterGame(String username);
+
     @Transactional
     @Modifying
     @Query("update Charactergame c set c.money = c.money + ?2 where c.pseudo = ?1")

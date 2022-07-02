@@ -16,6 +16,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.akane.scarletserenity.R
 import com.akane.scarletserenity.controller.character.CharacterActivity
+import com.akane.scarletserenity.model.webservice.User
+import com.akane.scarletserenity.service.ApiClient
+import com.akane.scarletserenity.service.ApiUserService
+import com.akane.scarletserenity.service.BasicAuthClient
 import com.akane.scarletserenity.service.BasicAuthInterceptor
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
@@ -25,7 +29,15 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -38,15 +50,6 @@ class MainActivity : BaseActivity() {
 
     lateinit var mPublisherAdView : PublisherAdView
 
-
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        handleResponseAfterSignIn(requestCode, resultCode, data!!)
-    }
 
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -90,14 +93,10 @@ class MainActivity : BaseActivity() {
 // Create and launch sign-in intent
 
         mBtLogin.setOnClickListener {
-            if (this.checkCurrentUser()) {
-                Log.d("Log", "Changement d'activity")
-                mBtLogin.setText(R.string.bt_login2)
-               // createUserInFirestore()
-                mp.stop()
-                this.startCharacterActivity()
-            } else {
-                this.startSignInActivity()
+            runBlocking {
+                launch {
+                    loadProfile(editTextTextPseudo.text.toString(),editTextTextPassword.text.toString())
+                }
             }
         }
 
@@ -175,64 +174,114 @@ class MainActivity : BaseActivity() {
 
         builder.setView(linearLayout)
 
-        val client =  OkHttpClient.Builder()
-            .addInterceptor(BasicAuthInterceptor(newPseudo.text.toString(), newPassword.text.toString()))
-            .build()
+//        val client =  OkHttpClient.Builder()
+//          //  .addInterceptor(BasicAuthInterceptor(newPseudo.text.toString(), newPassword.text.toString()))
+//            .build()
+//
+//        val gson = GsonBuilder()
+//            .setLenient()
+//            .create();
+//
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl("192.168.0.23:8080")
+//            .client(client)
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .build()
 
-        val gson = GsonBuilder()
-            .setLenient()
-            .create();
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("10.69.0.111")
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
 
 // Set up the buttons
         builder.setPositiveButton("Créer", DialogInterface.OnClickListener { dialog, which ->
             // Here you get get input text from the Edittext
             var m_Text = newPseudo.text.toString()
+            runBlocking {
+                launch {
+                    createCharacter(newPseudo.text.toString(), newPassword.text.toString())
+                }
+            }
+
         })
         builder.setNegativeButton("Annuler", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
 
         builder.show()
     }
 
-    protected fun onFailureListener(): OnFailureListener? {
-        return OnFailureListener {
+    suspend fun createCharacter(username:String, password:String) {
+
+        try {
+            var user = User(username,password,"USER")
+            val response = ApiClient.apiService.createUser(user)
+
+            if (response.isSuccessful && response.body() != null) {
+
+                Toast.makeText(
+                    this@MainActivity,
+                    "Personnage bien crée !",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                currentUsername = username
+                currentPassword = password
+
+                this.startCharacterActivity()
+                //do something
+            } else {
+                Log.e("error", response.message())
+                Toast.makeText(
+                    this@MainActivity,
+                    "Error Occurred: ${response.message()}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message)
             Toast.makeText(
-                applicationContext,
-                getString(R.string.error_unknown_error),
+                this@MainActivity,
+                "Error Occurred: ${e.message}",
                 Toast.LENGTH_LONG
             ).show()
         }
+
     }
 
+    suspend fun loadProfile(username:String, password:String) {
 
-    private fun handleResponseAfterSignIn(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent
-    ) {
-        val response = IdpResponse.fromResultIntent(data)
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == Activity.RESULT_OK) { // SUCCESS
-                //this.createUserInFirestore()
-                Toast.makeText(getApplicationContext(), getString(R.string.connection_succeed), Toast.LENGTH_LONG).show();
+        try {
+            val response = BasicAuthClient<ApiUserService>(username, password).create(ApiUserService::class.java).getUserByUsername(username)
 
+            if (response.isSuccessful && response.body() != null) {
+                val content = response.body()
+                Log.e("test", content?.username)
+
+                currentUsername = username
+                currentPassword = password
+
+                currentUser = content!!
+
+                this.startCharacterActivity()
+                mp.stop()
+
+                //do something
+            } else {
+                Log.e("error", response.message())
+                Toast.makeText(
+                    this@MainActivity,
+                    "Erreur, identifiants incorrectes",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-            else { // ERRORS
-                if (response == null) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_authentication_canceled), Toast.LENGTH_LONG).show();
-                } else if (response.error?.errorCode == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
-                } else if (response.error?.errorCode == ErrorCodes.UNKNOWN_ERROR) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
-                }
-            }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message + e.cause)
+            Toast.makeText(
+                this@MainActivity,
+                "Error Occurred: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
+
     }
+
 
 
 

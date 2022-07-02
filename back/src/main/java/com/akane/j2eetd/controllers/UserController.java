@@ -24,14 +24,19 @@ public class UserController {
         return userService.getUserById(username);
     }
 
-    @RequestMapping(path = "?firstName={firstName}", method = RequestMethod.GET)
-    public User getByFirstName(@PathVariable(name = "firstName") String firstName) throws ResourceNotFoundException {
-        return userService.getUserByFirstName(firstName);
-    }
+//    @RequestMapping(path = "?firstName={firstName}", method = RequestMethod.GET)
+//    public User getByFirstName(@PathVariable(name = "firstName") String firstName) throws ResourceNotFoundException {
+//        return userService.getUserByUsername(firstName);
+//    }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public User createOrUpdate(@RequestBody @Valid User user) {
-        return userService.createOrUpdate(user);
+    public User update(@RequestBody @Valid User user) {
+        return userService.update(user);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public User create(@RequestBody @Valid User user) {
+        return userService.create(user);
     }
 
     @Operation(summary = "Récupération de tous les utilisateurs")

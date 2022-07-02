@@ -81,11 +81,11 @@ class ParticipateVoteLobbyActivity: BaseActivity(), ScrutinParticipateAdapter.It
 
       //  Toast.makeText(this, "$doc", Toast.LENGTH_SHORT).show()
 
-        if(scrutinOrganizer != user?.uid){
-            startParticipateActivity(scrutinId!!)
-        }else{
-            startAdminVoteActivity(scrutinId!!)
-        }
+//        if(scrutinOrganizer != user?.uid){
+//            startParticipateActivity(scrutinId!!)
+//        }else{
+//            startAdminVoteActivity(scrutinId!!)
+//        }
 
 
 

@@ -111,14 +111,14 @@ class CreateVoteActivity : BaseActivity() {
         bt_validate.setOnClickListener{
             uploadImage()
             setDataTime()
-            pathData = dataEmp + filePathDatabase
+//            pathData = dataEmp + filePathDatabase
 
             val scrutinId = ScrutinHelper.getScrutinId()
 
-            ScrutinHelper.createScrutin(scrutinId!!,Scrutin(scrutinId,et_topic_label.text.toString(),pathData,et_description.text.toString(),mDateTimeStartReal,mDateTimeEndReal,false,
-                user?.uid))
+//            ScrutinHelper.createScrutin(scrutinId!!,Scrutin(scrutinId,et_topic_label.text.toString(),pathData,et_description.text.toString(),mDateTimeStartReal,mDateTimeEndReal,false,
+//                user?.uid))
 
-            purposeCreate(scrutinId)
+//            purposeCreate(scrutinId)
         }
     }
 

@@ -122,6 +122,7 @@
             android:id="@+id/photo_url"
             android:layout_width="108dp"
             android:layout_height="73dp"
+            android:visibility="gone"
             app:srcCompat="@drawable/male_1" />
 
     </LinearLayout>

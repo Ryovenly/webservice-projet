@@ -46,7 +46,7 @@ class MainCharacterActivity : BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_character)
 
-        getModelCharacter()
+//        getModelCharacter()
 
         setViewListeners()
 
@@ -138,25 +138,25 @@ class MainCharacterActivity : BaseActivity(){
         mMana.text = "${getString(R.string.mana)} : $mana / $manaMax"
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun getModelCharacter() {
-        CharacterHelper.getCharacter(user?.uid)
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null) {
-                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
-
-                    viewGender()
-                    viewHpMana()
-
-
-                } else {
-                    Log.d("TAG", "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "get failed with ", exception)
-            }
-    }
+//    @SuppressLint("SetTextI18n")
+//    private fun getModelCharacter() {
+//        CharacterHelper.getCharacter(user?.uid)
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot != null) {
+//                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
+//
+//                    viewGender()
+//                    viewHpMana()
+//
+//
+//                } else {
+//                    Log.d("TAG", "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("TAG", "get failed with ", exception)
+//            }
+//    }
 
     private fun startChatActivity() {
         val intent = Intent(this, LobbyActivity::class.java)

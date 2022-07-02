@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.akane.scarletserenity.R
 import com.akane.scarletserenity.controller.character.MainCharacterActivity
+import com.akane.scarletserenity.model.webservice.User
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
@@ -24,10 +25,20 @@ import kotlin.properties.Delegates
 
 open class BaseActivity: AppCompatActivity(),TextToSpeech.OnInitListener {
 
-    val user = Firebase.auth.currentUser
-    val db = FirebaseFirestore.getInstance()
+//    val user = Firebase.auth.currentUser
+//    val db = FirebaseFirestore.getInstance()
     lateinit var tts:TextToSpeech
-    val dataEmp = "gs://scarlet-serenity.appspot.com/"
+
+    companion object{
+        lateinit var currentUsername:String
+        lateinit var currentPassword:String
+
+        lateinit var currentUser: User
+        lateinit var currentPseudo: String
+    }
+
+
+//    val dataEmp = "gs://scarlet-serenity.appspot.com/"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

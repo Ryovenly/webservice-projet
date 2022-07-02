@@ -5,11 +5,19 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.annotation.RequiresApi
 import com.akane.scarletserenity.R
 import com.akane.scarletserenity.controller.BaseActivity
 import com.akane.scarletserenity.model.character.CharacterHelper
+import com.akane.scarletserenity.model.webservice.CharacterGame
+import com.akane.scarletserenity.service.ApiCharacterGameService
+import com.akane.scarletserenity.service.ApiUserService
+import com.akane.scarletserenity.service.BasicAuthClient
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class CreateCharacterActivity: BaseActivity() {
@@ -81,28 +89,57 @@ class CreateCharacterActivity: BaseActivity() {
             else if (mGender == "MALE" || mGender == "FEMALE"){
                 // create character
 
-                var mStrength = 5
-                var mIntelligence = 5
+                var mStrength = 5L
+                var mIntelligence = 5L
 
-            CharacterHelper.createCharacter(user?.uid,
-                mPseudo.text.toString(),
-                mGender,
-                1000,
-                25*mStrength,
-                20*mIntelligence,
-                100,
-                100,
-                25*mStrength,
-                20*mIntelligence,
-                100,
-                100,
-                mStrength,
-                mIntelligence,
-                5,
-                5,
-                LocalDateTime.now().toString(),
-                LocalDateTime.now().toString(),
-            null)
+                var characterGame = CharacterGame( mPseudo.text.toString(),
+                    mGender,
+                    1000,
+                    25*mStrength,
+                    20*mIntelligence,
+                    100,
+                    100,
+                    25*mStrength,
+                    20*mIntelligence,
+                    100,
+                    100,
+                    mStrength,
+                    mIntelligence,
+                    5,
+                    5,
+                    LocalDateTime.now().toString(),
+                    LocalDateTime.now().toString(),
+                    "",
+                    currentUser
+                )
+
+                runBlocking {
+                    launch {
+                        createCharacter(characterGame)
+                    }
+                }
+
+
+
+//            CharacterHelper.createCharacter(user?.uid,
+//                mPseudo.text.toString(),
+//                mGender,
+//                1000,
+//                25*mStrength,
+//                20*mIntelligence,
+//                100,
+//                100,
+//                25*mStrength,
+//                20*mIntelligence,
+//                100,
+//                100,
+//                mStrength,
+//                mIntelligence,
+//                5,
+//                5,
+//                LocalDateTime.now().toString(),
+//                LocalDateTime.now().toString(),
+//            null)
 
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle(getString(R.string.createCharacter))
@@ -118,6 +155,44 @@ class CreateCharacterActivity: BaseActivity() {
                 Toast.makeText(getApplicationContext(), getString(R.string.checkAll), Toast.LENGTH_LONG).show();
             }
 
+        }
+
+    }
+
+    suspend fun createCharacter(characterGame: CharacterGame) {
+
+        try {
+            val response = BasicAuthClient<ApiCharacterGameService>(currentUsername, currentPassword).create(ApiCharacterGameService::class.java).createCharacterGame(characterGame)
+
+            if (response.isSuccessful && response.body() != null) {
+                val content = response.body()
+
+                currentPseudo = characterGame.pseudo!!
+
+                // mp.stop()
+
+//                val builder = AlertDialog.Builder(this)
+//                builder.setTitle(getString(R.string.createCharacter))
+//                builder.setMessage(getString(R.string.createCharacterMessage))
+//
+//                builder.setPositiveButton(R.string.createCharacterMessageButton) { dialog, which ->
+//                    startQuizActivity()
+//                }
+//                builder.show()
+
+                //do something
+            } else {
+                Log.e("error", response.message())
+                Toast.makeText(getApplicationContext(), getString(R.string.checkAll), Toast.LENGTH_LONG).show();
+            }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message + e.cause)
+            Toast.makeText(
+                this@CreateCharacterActivity,
+                "Error Occurred: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
 
     }

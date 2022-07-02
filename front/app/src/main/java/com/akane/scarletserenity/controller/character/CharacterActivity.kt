@@ -8,29 +8,30 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.akane.scarletserenity.R
 import com.akane.scarletserenity.controller.BaseActivity
 import com.akane.scarletserenity.controller.MainActivity
 import com.akane.scarletserenity.controller.once.CreateCharacterActivity
-import com.akane.scarletserenity.model.character.Character
-import com.akane.scarletserenity.model.character.CharacterHelper
-import com.akane.scarletserenity.model.user.User
-import com.akane.scarletserenity.model.user.UserHelper
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.akane.scarletserenity.model.webservice.CharacterGame
+import com.akane.scarletserenity.service.ApiCharacterGameService
+import com.akane.scarletserenity.service.ApiUserService
+import com.akane.scarletserenity.service.BasicAuthClient
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_character.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class CharacterActivity : BaseActivity()  {
-    val email = user?.email
-    val photoUrl = user?.photoUrl
-    var modelCurrentUser: User? =
-        User("", "")
-    lateinit var modelCharacter: Character
+    //val email = user?.email
+    //val photoUrl = user?.photoUrl
+//    var modelCurrentUser: User? =
+//        User("", "")
+    lateinit var modelCharacter: CharacterGame
     val TAG = "chaud"
 
 
@@ -39,19 +40,27 @@ class CharacterActivity : BaseActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_character)
 
-        createUserInFirestore()
+        //createUserInFirestore()
         val mEmail = findViewById<TextView>(R.id.user_mail) as TextView
-        mEmail.text = email
+        mEmail.text = currentUsername
         val mlogout = findViewById<Button>(R.id.bt_logout) as Button
-        getDocument()
-        checkCharacter()
+//        getDocument()
+//        checkCharacter()
 
         speech(getString(R.string.characterSpeech))
 
-        Glide.with(this)
-            .load(photoUrl)
-            .apply(RequestOptions.circleCropTransform())
-            .into(findViewById<ImageView>(R.id.photo_url) as ImageView)
+        runBlocking {
+            launch {
+                loadProfileUser(currentUsername, currentPassword)
+                loadProfile(currentUsername, currentPassword)
+            }
+        }
+
+
+//        Glide.with(this)
+//            .load(photoUrl)
+//            .apply(RequestOptions.circleCropTransform())
+//            .into(findViewById<ImageView>(R.id.photo_url) as ImageView)
 
         mlogout.setOnClickListener(){
             signOutUserFromFirebase()
@@ -60,15 +69,15 @@ class CharacterActivity : BaseActivity()  {
 
     }
 
-    private fun createUserInFirestore(){
-
-        val uid = this.user?.uid
-        val username = this.user?.displayName
-
-        UserHelper.createUser(uid, username)
-        Log.d("ça marche", "Utilisateur créé")
-
-    }
+//    private fun createUserInFirestore(){
+//
+//        val uid = this.user?.uid
+//        val username = this.user?.displayName
+//
+//        UserHelper.createUser(uid, username)
+//        Log.d("ça marche", "Utilisateur créé")
+//
+//    }
 
     private fun signOutUserFromFirebase() {
         AuthUI.getInstance().signOut(this)
@@ -79,56 +88,157 @@ class CharacterActivity : BaseActivity()  {
         startActivity(intent)
     }
 
-    @SuppressLint("ResourceType")
-    private fun checkCharacter() {
-        val docRef = CharacterHelper.getCharacter(user?.uid)
+//    @SuppressLint("ResourceType")
+//    private fun checkCharacter() {
+//        val docRef = CharacterHelper.getCharacter(user?.uid)
+//        val mAvatar = findViewById<ImageView>(R.id.iv_character) as ImageView
+//        docRef
+//            .addOnSuccessListener { document ->
+//
+//                if (document.data.isNullOrEmpty()){
+//                    // go create character activity
+//                    mAvatar.setImageResource(R.drawable.add_character)
+//                    var mContent = findViewById<TextView>(R.id.tv_content) as TextView
+//                    mContent.setText(R.string.content_createcharacter)
+//                    Log.d(TAG, "Y a pas de personnage encore $document")
+//                    mAvatar.setOnClickListener {
+//                        startCreateCharacterActivity()
+//                    }
+//
+//                } else {
+//                    // go Menu character Activity
+//                    val ava = R.drawable.female_1
+//                    mAvatar.setImageResource(ava)
+//                    getCharacter()
+//                    mAvatar.setOnClickListener {
+//                        startMainCharacterActivity()
+//                    }
+//
+//                    Log.d(TAG, "Y a un personnage")
+//
+//
+//                }
+//            }
+//    }
+
+    suspend fun loadProfile(username:String, password:String) {
+
         val mAvatar = findViewById<ImageView>(R.id.iv_character) as ImageView
-        docRef
-            .addOnSuccessListener { document ->
 
-                if (document.data.isNullOrEmpty()){
-                    // go create character activity
-                    mAvatar.setImageResource(R.drawable.add_character)
-                    var mContent = findViewById<TextView>(R.id.tv_content) as TextView
-                    mContent.setText(R.string.content_createcharacter)
-                    Log.d(TAG, "Y a pas de personnage encore $document")
-                    mAvatar.setOnClickListener {
-                        startCreateCharacterActivity()
-                    }
-
-                } else {
-                    // go Menu character Activity
-                    val ava = R.drawable.female_1
-                    mAvatar.setImageResource(ava)
-                    getCharacter()
-                    mAvatar.setOnClickListener {
-                        startMainCharacterActivity()
-                    }
-
-                    Log.d(TAG, "Y a un personnage")
+        try {
+            val response = BasicAuthClient<ApiCharacterGameService>(username, password).create(ApiCharacterGameService::class.java).getCharacterGameByUser(username)
 
 
+            if (response.isSuccessful && response.body() != null) {
+                val content = response.body()
+                Log.e("test", content?.pseudo)
+
+                currentPseudo = content?.pseudo!!
+
+                modelCharacter = content!!
+
+                val response2 = BasicAuthClient<ApiCharacterGameService>(username, password).create(ApiCharacterGameService::class.java).incrementHpMaxCharacter(modelCharacter.pseudo!!, 2)
+
+                Log.e("test", response2?.message())
+
+                // go Menu character Activity
+                val ava = R.drawable.female_1
+                mAvatar.setImageResource(ava)
+                attributesCharacter()
+              //  getCharacter()
+                mAvatar.setOnClickListener {
+                    startMainCharacterActivity()
                 }
+
+                Log.d(TAG, "Y a un personnage")
+
+                //do something
+            } else {
+
+                mAvatar.setImageResource(R.drawable.add_character)
+                var mContent = findViewById<TextView>(R.id.tv_content) as TextView
+                mContent.setText(R.string.content_createcharacter)
+                Log.d(TAG, "Y a pas de personnage encore")
+                mAvatar.setOnClickListener {
+                    startCreateCharacterActivity()
+                }
+
+                Log.e("error", response.message())
+                Toast.makeText(
+                    this@CharacterActivity,
+                    "Pas de personnage actuellement, veuillez en créez un",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message)
+
+            mAvatar.setImageResource(R.drawable.add_character)
+            var mContent = findViewById<TextView>(R.id.tv_content) as TextView
+            mContent.setText(R.string.content_createcharacter)
+            Log.d(TAG, "Y a pas de personnage encore")
+            mAvatar.setOnClickListener {
+                startCreateCharacterActivity()
+            }
+
+            Toast.makeText(
+                this@CharacterActivity,
+                "Pas de personnage actuellement, veuillez en créez un",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
     }
 
-    private fun getDocument() {
-        UserHelper.getUser(user?.uid)
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    modelCurrentUser = document.toObject(User::class.java)
-                    Log.d(TAG, "user: $modelCurrentUser")
-                    var mName = findViewById<TextView>(R.id.user_name) as TextView
-                    mName.text = modelCurrentUser?.username
-                } else {
-                    Log.d(TAG, "No such document")
-                }
+    suspend fun loadProfileUser(username:String, password:String) {
+
+        try {
+            val response = BasicAuthClient<ApiUserService>(username, password).create(ApiUserService::class.java).getUserByUsername(username)
+
+            if (response.isSuccessful && response.body() != null) {
+                val content = response.body()
+                Log.e("test", content?.username)
+                currentUser = content!!
+
+                //do something
+            } else {
+                Log.e("error", response.message())
+                Toast.makeText(
+                    this@CharacterActivity,
+                    "Erreur, identifiants incorrectes",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message + e.cause)
+            Toast.makeText(
+                this@CharacterActivity,
+                "Error Occurred: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
     }
+
+//    private fun getDocument() {
+//        UserHelper.getUser(user?.uid)
+//            .addOnSuccessListener { document ->
+//                if (document != null) {
+//                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+//                    modelCurrentUser = document.toObject(User::class.java)
+//                    Log.d(TAG, "user: $modelCurrentUser")
+//                    var mName = findViewById<TextView>(R.id.user_name) as TextView
+//                    mName.text = modelCurrentUser?.username
+//                } else {
+//                    Log.d(TAG, "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d(TAG, "get failed with ", exception)
+//            }
+//    }
 
     @SuppressLint("SetTextI18n")
     private fun attributesCharacter(){
@@ -160,21 +270,21 @@ class CharacterActivity : BaseActivity()  {
         }
     }
 
-    private fun getCharacter() {
-        CharacterHelper.getCharacter(user?.uid)
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null) {
-                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
-                    attributesCharacter()
-
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
-    }
+//    private fun getCharacter() {
+//        CharacterHelper.getCharacter(user?.uid)
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot != null) {
+//                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
+//                    attributesCharacter()
+//
+//                } else {
+//                    Log.d(TAG, "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d(TAG, "get failed with ", exception)
+//            }
+//    }
 
     private fun startCreateCharacterActivity() {
         val intent = Intent(this, CreateCharacterActivity::class.java)

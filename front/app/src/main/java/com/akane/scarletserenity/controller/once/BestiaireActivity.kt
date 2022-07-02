@@ -20,7 +20,7 @@ class BestiaireActivity : BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bestiaire)
 
-        initListRecyclerView()
+//        initListRecyclerView()
         onViewListener()
 
     }
@@ -32,14 +32,14 @@ class BestiaireActivity : BaseActivity(){
     }
 
 
-    private fun initListRecyclerView() {
-        if (user == null)
-            return
-        rv_bestiaire.layoutManager = LinearLayoutManager(this)
-        val adapter = MonsterAdapter(monsters)
-        rv_bestiaire.adapter = adapter
-        listenForMonsters()
-    }
+//    private fun initListRecyclerView() {
+//        if (user == null)
+//            return
+//        rv_bestiaire.layoutManager = LinearLayoutManager(this)
+//        val adapter = MonsterAdapter(monsters)
+//        rv_bestiaire.adapter = adapter
+//        listenForMonsters()
+//    }
 
     private fun listenForMonsters() {
 

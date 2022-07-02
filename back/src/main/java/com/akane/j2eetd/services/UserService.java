@@ -40,7 +40,15 @@ public class UserService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
-    public User createOrUpdate(User user) {
+    public User update(User user) {
+        if (StringUtils.isNotEmpty(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        logger.info("Update user... {}", user.getUsername());
+        return userRepository.save(user);
+    }
+
+    public User create(User user) {
         if (StringUtils.isNotEmpty(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
@@ -55,35 +63,39 @@ public class UserService implements UserDetailsService {
     public User getUserById(String username) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {
+            logger.info("Get user... {}", user.get().getUsername());
             return user.get();
         }
         throw new ResourceNotFoundException(User.class, username);
     }
 
-    @Operation(summary = "Récupération d'un utilisateur à partir de son firstName")
-    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
-    @RolesAllowed("ROLE_ADMIN")
-    public User getUserByFirstName(String firstName) throws ResourceNotFoundException {
-        Optional<User> user = Optional.ofNullable(userRepository.findByFirstName(firstName));
-        if (user.isPresent()) {
-            return user.get();
-        }
-        throw new ResourceNotFoundException(User.class, firstName);
-    }
+//    @Operation(summary = "Récupération d'un utilisateur à partir de son firstName")
+//    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+//    @RolesAllowed("ROLE_ADMIN")
+//    public User getUserByFirstName(String firstName) throws ResourceNotFoundException {
+//        Optional<User> user = Optional.ofNullable(userRepository.findByFirstName(firstName));
+//        if (user.isPresent()) {
+//            return user.get();
+//        }
+//        throw new ResourceNotFoundException(User.class, firstName);
+//    }
 
 
     @RolesAllowed({ "ROLE_ADMIN" })
     public List<User> getAllUsers() {
+        logger.info("Get all user ");
         return userRepository.findAll();
     }
 
     @RolesAllowed("ROLE_ADMIN")
     public void deleteUser(String username) {
+        logger.info("Deleted user... {}", username);
         userRepository.deleteById(username);
     }
 
     @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
     public Page<User> getUsersWithPaging(Pageable pageable) {
+        logger.info("Get all user with paging");
         return userRepository.findAll(pageable);
     }
 
@@ -95,18 +107,20 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + user.get().getRole()));
+            logger.info("Load user... {}", username);
             return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(),
                     authorities);
         }
         throw new UsernameNotFoundException("User '" + username + "' not found or inactive");
     }
 
-//    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
     public void setPassword(String userName, String newPassword) {
         Optional<User> user = userRepository.findById(userName);
         String encodedNewPassword = passwordEncoder.encode(newPassword);
         if (user.isPresent()) {
             user.get().setPassword(encodedNewPassword);
+            logger.info("Changed password user... {}", userName);
             userRepository.save(user.get());
         }
     }

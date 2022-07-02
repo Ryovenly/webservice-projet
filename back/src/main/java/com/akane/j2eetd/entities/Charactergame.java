@@ -1,6 +1,8 @@
 package com.akane.j2eetd.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -46,7 +48,8 @@ public class Charactergame {
     @Column
     private String img;
 
-    @OneToOne(mappedBy = "charactergame")@JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL ,mappedBy = "charactergame")
+    @JsonManagedReference
     private User user;
 
     public String getPseudo() {

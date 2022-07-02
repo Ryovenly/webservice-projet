@@ -29,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api", "/api/**", "/swagger-ui/**").hasRole("ADMIN")
                 .antMatchers("/users/update-password").permitAll()
+                .antMatchers("/users").permitAll()
                 .anyRequest().authenticated()
                 .and().httpBasic();
 

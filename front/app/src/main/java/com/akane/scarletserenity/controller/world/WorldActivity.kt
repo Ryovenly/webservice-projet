@@ -31,7 +31,7 @@ class WorldActivity: BaseActivity() {
         initListRecyclerView()
         onViewListener()
 
-        getModelCharacter()
+//        getModelCharacter()
 
     }
 
@@ -43,8 +43,8 @@ class WorldActivity: BaseActivity() {
     }
 
     private fun initListRecyclerView() {
-        if (user == null)
-            return
+//        if (user == null)
+//            return
         rv_world.layoutManager = LinearLayoutManager(this)
         val adapter = WorldAdapter(worlds)
         rv_world.adapter = adapter
@@ -73,22 +73,22 @@ class WorldActivity: BaseActivity() {
 
     }
 
-    private fun getModelCharacter() {
-        CharacterHelper.getCharacter(user?.uid)
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null) {
-                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
-
-                    viewStamina()
-
-                } else {
-                    Log.d("TAG", "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "get failed with ", exception)
-            }
-    }
+//    private fun getModelCharacter() {
+//        CharacterHelper.getCharacter(user?.uid)
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot != null) {
+//                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
+//
+//                    viewStamina()
+//
+//                } else {
+//                    Log.d("TAG", "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("TAG", "get failed with ", exception)
+//            }
+//    }
 
     @SuppressLint("SetTextI18n")
     private fun viewStamina(){

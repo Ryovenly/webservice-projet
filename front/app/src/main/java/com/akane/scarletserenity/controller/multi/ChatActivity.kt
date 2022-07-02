@@ -29,8 +29,8 @@ class ChatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
         textAssign()
-        getCharacter()
-        initListRecyclerView()
+//        getCharacter()
+//        initListRecyclerView()
         setViewListeners()
 
     }
@@ -39,37 +39,37 @@ class ChatActivity : BaseActivity() {
         edittext_chat.hint = getString(R.string.chatText)
     }
 
-    private fun getCharacter() {
-        CharacterHelper.getCharacter(user?.uid)
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null) {
-                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
-
-                } else {
-                    Log.d("TAG", "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "get failed with ", exception)
-            }
-    }
+//    private fun getCharacter() {
+//        CharacterHelper.getCharacter(user?.uid)
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot != null) {
+//                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
+//
+//                } else {
+//                    Log.d("TAG", "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("TAG", "get failed with ", exception)
+//            }
+//    }
 
     private fun setViewListeners() {
         button_send.setOnClickListener {
-            sendChatMessage()
+//            sendChatMessage()
         }
         bt_returnChat.setOnClickListener {
             finish()
         }
     }
-    private fun initListRecyclerView() {
-        if (user == null)
-            return
-        list_chatRV.layoutManager = LinearLayoutManager(this)
-        val adapter = ChatAdapter(chatMessages, user.uid)
-        list_chatRV.adapter = adapter
-        listenForChatMessages()
-    }
+//    private fun initListRecyclerView() {
+//        if (user == null)
+//            return
+//        list_chatRV.layoutManager = LinearLayoutManager(this)
+//        val adapter = ChatAdapter(chatMessages, user.uid)
+//        list_chatRV.adapter = adapter
+//        listenForChatMessages()
+//    }
     private fun listenForChatMessages() {
         roomId = intent.getStringExtra("INTENT_EXTRA_ROOMID")
         if (roomId == null) {
@@ -103,23 +103,23 @@ class ChatActivity : BaseActivity() {
         chatRegistration?.remove()
         super.onDestroy()
     }
-    private fun sendChatMessage() {
-
-        val message = edittext_chat.text.toString()
-        if (message.isEmpty()){
-            Toast.makeText(getApplicationContext(), getString(R.string.message_chat_error), Toast.LENGTH_LONG).show();
-        }
-        else {
-            edittext_chat.setText("")
-            firestore.collection("rooms").document(roomId!!).collection("messages")
-                .add(mapOf(
-                    Pair("text", message),
-                    Pair("user", user?.uid),
-                    Pair("timestamp", Timestamp.now()),
-                    Pair("character", modelCharacter.pseudo)
-                ))
-        }
-    }
+//    private fun sendChatMessage() {
+//
+//        val message = edittext_chat.text.toString()
+//        if (message.isEmpty()){
+//            Toast.makeText(getApplicationContext(), getString(R.string.message_chat_error), Toast.LENGTH_LONG).show();
+//        }
+//        else {
+//            edittext_chat.setText("")
+//            firestore.collection("rooms").document(roomId!!).collection("messages")
+//                .add(mapOf(
+//                    Pair("text", message),
+//                    Pair("user", user?.uid),
+//                    Pair("timestamp", Timestamp.now()),
+//                    Pair("character", modelCharacter.pseudo)
+//                ))
+//        }
+//    }
 
 
 

@@ -63,7 +63,7 @@ class ShifumiActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shifumi)
         setRoomData()
-        setFirstPlayersData()
+//        setFirstPlayersData()
         createGame()
         giveUp()
 
@@ -137,16 +137,16 @@ class ShifumiActivity: BaseActivity() {
         var scorePlayer = 0
         var scoreOpponent = 0
 
-        if (user?.uid == roomData.userId1){
-
-             scorePlayer = gameData.scorePlayer1
-             scoreOpponent = gameData.scorePlayer2
-
-        } else{
-
-             scorePlayer = gameData.scorePlayer2
-             scoreOpponent = gameData.scorePlayer1
-        }
+//        if (user?.uid == roomData.userId1){
+//
+//             scorePlayer = gameData.scorePlayer1
+//             scoreOpponent = gameData.scorePlayer2
+//
+//        } else{
+//
+//             scorePlayer = gameData.scorePlayer2
+//             scoreOpponent = gameData.scorePlayer1
+//        }
 
 
         tv_oppenentScore.text = "Score : $scoreOpponent"
@@ -185,7 +185,7 @@ class ShifumiActivity: BaseActivity() {
             ?.addOnSuccessListener { document ->
                 if (document != null) {
                     roomData = document.toObject(ShifumiRoom::class.java)!!
-                    setFirstPlayersData()
+//                    setFirstPlayersData()
                 } else {
                     Log.d("TAG", "No such document")
                 }
@@ -193,44 +193,44 @@ class ShifumiActivity: BaseActivity() {
             }
     }
 
-    private fun setFirstPlayersData(){
-
-        if(roomData.userId1 == user?.uid){
-            player = ShifumiPlayer(
-                roomData.player1!!,
-                roomData.userId1!!,
-                0,
-                ""
-            )
-            playerOpponent =
-                ShifumiPlayer(
-                    roomData.player2!!,
-                    roomData.userId2!!,
-                    0,
-                    ""
-                )
-
-            Log.d("TAG", "userId1 = player")
-        } else{
-            player = ShifumiPlayer(
-                roomData.player2!!,
-                roomData.userId2!!,
-                0,
-                ""
-            )
-            playerOpponent =
-                ShifumiPlayer(
-                    roomData.player1!!,
-                    roomData.userId1!!,
-                    0,
-                    ""
-                )
-
-            Log.d("TAG", "userId2 = player")
-        }
-        setViewListeners()
-
-    }
+//    private fun setFirstPlayersData(){
+//
+//        if(roomData.userId1 == user?.uid){
+//            player = ShifumiPlayer(
+//                roomData.player1!!,
+//                roomData.userId1!!,
+//                0,
+//                ""
+//            )
+//            playerOpponent =
+//                ShifumiPlayer(
+//                    roomData.player2!!,
+//                    roomData.userId2!!,
+//                    0,
+//                    ""
+//                )
+//
+//            Log.d("TAG", "userId1 = player")
+//        } else{
+//            player = ShifumiPlayer(
+//                roomData.player2!!,
+//                roomData.userId2!!,
+//                0,
+//                ""
+//            )
+//            playerOpponent =
+//                ShifumiPlayer(
+//                    roomData.player1!!,
+//                    roomData.userId1!!,
+//                    0,
+//                    ""
+//                )
+//
+//            Log.d("TAG", "userId2 = player")
+//        }
+//        setViewListeners()
+//
+//    }
 
     private fun createGame(){
         ShifumiHelper.createShifumiGamePlayer(roomId!!)
@@ -298,13 +298,13 @@ class ShifumiActivity: BaseActivity() {
         getRoomData()
         getGameData()
 
-        if (user?.uid == roomData.userId1){
-            choicePlayer = gameData.choicePlayer1
-            choiceOpponent = gameData.choicePlayer2
-        } else{
-            choicePlayer = gameData.choicePlayer2
-            choiceOpponent = gameData.choicePlayer1
-        }
+//        if (user?.uid == roomData.userId1){
+//            choicePlayer = gameData.choicePlayer1
+//            choiceOpponent = gameData.choicePlayer2
+//        } else{
+//            choicePlayer = gameData.choicePlayer2
+//            choiceOpponent = gameData.choicePlayer1
+//        }
     }
 
     private fun showChoice(){
@@ -488,18 +488,18 @@ class ShifumiActivity: BaseActivity() {
 
                 // score +1
 
-                if (user?.uid == roomData.userId1){
-
-                    val scorePlayer = gameData.scorePlayer1 + 1
-                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
-
-
-
-                } else{
-
-                    val scorePlayer = gameData.scorePlayer2 + 1
-                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
-                }
+//                if (user?.uid == roomData.userId1){
+//
+//                    val scorePlayer = gameData.scorePlayer1 + 1
+//                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
+//
+//
+//
+//                } else{
+//
+//                    val scorePlayer = gameData.scorePlayer2 + 1
+//                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
+//                }
 
                 Toast.makeText(getApplicationContext(), getString(R.string.shifumi_win_point), Toast.LENGTH_LONG).show();
 
@@ -520,17 +520,17 @@ class ShifumiActivity: BaseActivity() {
 
                 // score +1
 
-                if (user?.uid == roomData.userId1){
-
-                    val scorePlayer = gameData.scorePlayer1 + 1
-                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
-
-
-                } else{
-
-                    val scorePlayer = gameData.scorePlayer2 + 1
-                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
-                }
+//                if (user?.uid == roomData.userId1){
+//
+//                    val scorePlayer = gameData.scorePlayer1 + 1
+//                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
+//
+//
+//                } else{
+//
+//                    val scorePlayer = gameData.scorePlayer2 + 1
+//                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
+//                }
 
                 Toast.makeText(getApplicationContext(), getString(R.string.shifumi_win_point), Toast.LENGTH_LONG).show();
 
@@ -551,17 +551,17 @@ class ShifumiActivity: BaseActivity() {
 
                 // score +1
 
-                if (user?.uid == roomData.userId1){
-
-                    val scorePlayer = gameData.scorePlayer1 + 1
-                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
-
-
-                } else{
-
-                    val scorePlayer = gameData.scorePlayer2 + 1
-                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
-                }
+//                if (user?.uid == roomData.userId1){
+//
+//                    val scorePlayer = gameData.scorePlayer1 + 1
+//                    ShifumiHelper.updateScorePlayer1(roomId!!,scorePlayer)
+//
+//
+//                } else{
+//
+//                    val scorePlayer = gameData.scorePlayer2 + 1
+//                    ShifumiHelper.updateScorePlayer2(roomId!!,scorePlayer)
+//                }
 
                 Toast.makeText(getApplicationContext(), getString(R.string.shifumi_win_point), Toast.LENGTH_LONG).show();
 
@@ -586,17 +586,17 @@ class ShifumiActivity: BaseActivity() {
 
                 // score +1
 
-                if (user?.uid == roomData.userId1) {
-
-                    val scorePlayer = gameData.scorePlayer1 + 1
-                    ShifumiHelper.updateScorePlayer1(roomId!!, scorePlayer)
-
-
-                } else {
-
-                    val scorePlayer = gameData.scorePlayer2 + 1
-                    ShifumiHelper.updateScorePlayer2(roomId!!, scorePlayer)
-                }
+//                if (user?.uid == roomData.userId1) {
+//
+//                    val scorePlayer = gameData.scorePlayer1 + 1
+//                    ShifumiHelper.updateScorePlayer1(roomId!!, scorePlayer)
+//
+//
+//                } else {
+//
+//                    val scorePlayer = gameData.scorePlayer2 + 1
+//                    ShifumiHelper.updateScorePlayer2(roomId!!, scorePlayer)
+//                }
 
                 Toast.makeText(
                     getApplicationContext(),

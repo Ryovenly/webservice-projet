@@ -22,8 +22,20 @@ public class CharactergameController {
         return charactergameService.getCharactergameByPseudo(pseudo);
     }
 
-    @Operation(summary = "Création ou mise à jour d'un personnage")
+    @Operation(summary = "Récupération d'un personnage à partir de son utilisateur")
+    @RequestMapping(path = "/user/{username}", method = RequestMethod.GET)
+    public Charactergame getCharactergameByUser(@PathVariable(value = "username") String username) {
+        return charactergameService.getCharactergameByUser(username);
+    }
+
+    @Operation(summary = "Mise à jour d'un personnage")
     @RequestMapping(method = RequestMethod.PUT)
+    public Charactergame modifyCharactergame(@RequestBody @Valid Charactergame charactergame) {
+        return charactergameService.createOrUpdate(charactergame);
+    }
+
+    @Operation(summary = "Création d'un personnage")
+    @RequestMapping(method = RequestMethod.POST)
     public Charactergame addCharactergame(@RequestBody @Valid Charactergame charactergame) {
         return charactergameService.createOrUpdate(charactergame);
     }
@@ -31,7 +43,7 @@ public class CharactergameController {
     @Operation(summary = "Récupération de toutes les personnages")
     @RequestMapping(path = "_all", method = RequestMethod.GET)
     public List<Charactergame> getCharactergames() {
-        return charactergameService.getCharactergame();
+        return charactergameService.getAllCharactergames();
     }
 
     @Operation(summary = "Suppression d'un personnage")
@@ -41,80 +53,80 @@ public class CharactergameController {
     }
 
     @Operation(summary = "Transaction de l'argent du personnage selon le montant définit")
-    @RequestMapping(path = "/{pseudo}/money/{amount}", method = RequestMethod.PUT)
-    public void transactionMoney(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "amount") Long amount){
+    @RequestMapping(path = "/{pseudo}/money", method = RequestMethod.PUT)
+    public void transactionMoney(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "amount") Long amount){
         charactergameService.setAmountMoney(pseudo, amount);
     }
 
     @Operation(summary = "Incrémente les hpmax du personnage")
-    @RequestMapping(path = "/{pseudo}/hpmax/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementHpMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/hpmax", method = RequestMethod.PUT)
+    public void incrementHpMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementHpMaxCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente les manamax du personnage")
-    @RequestMapping(path = "/{pseudo}/manamax/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementManaMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/manamax", method = RequestMethod.PUT)
+    public void incrementManaMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementManaMaxCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente l'endurance max du personnage")
-    @RequestMapping(path = "/{pseudo}/staminamax/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementStaminaMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/staminamax", method = RequestMethod.PUT)
+    public void incrementStaminaMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementStaminaMaxCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente la satiété max du personnage")
-    @RequestMapping(path = "/{pseudo}/hungermax/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementHungerMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/hungermax", method = RequestMethod.PUT)
+    public void incrementHungerMaxCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementHungerMaxCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente les hp du personnage")
-    @RequestMapping(path = "/{pseudo}/hp/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementHpCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/hp", method = RequestMethod.PUT)
+    public void incrementHpCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementHpCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente le mana du personnage")
-    @RequestMapping(path = "/{pseudo}/mana/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementManaCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/mana", method = RequestMethod.PUT)
+    public void incrementManaCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementManaCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente l'endurance du personnage")
-    @RequestMapping(path = "/{pseudo}/stamina/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementStaminaCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/stamina", method = RequestMethod.PUT)
+    public void incrementStaminaCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementStaminaCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente la satiété du personnage")
-    @RequestMapping(path = "/{pseudo}/hunger/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementHungerCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/hunger", method = RequestMethod.PUT)
+    public void incrementHungerCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementHungerCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente la force du personnage")
-    @RequestMapping(path = "/{pseudo}/strength/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementStrengthCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/strength", method = RequestMethod.PUT)
+    public void incrementStrengthCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementStrengthCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente l'intelligence du personnage")
-    @RequestMapping(path = "/{pseudo}/intelligence/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementIntelligenceCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/intelligence", method = RequestMethod.PUT)
+    public void incrementIntelligenceCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementIntelligenceCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente l'agilité du personnage")
-    @RequestMapping(path = "/{pseudo}/agility/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementAgilityCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/agility", method = RequestMethod.PUT)
+    public void incrementAgilityCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementAgilityCharacter(pseudo, valueIncrement);
     }
 
     @Operation(summary = "Incrémente la chance du personnage")
-    @RequestMapping(path = "/{pseudo}/luck/{valueIncrement}", method = RequestMethod.PUT)
-    public void incrementLuckCharacter(@PathVariable(value = "pseudo") String pseudo, @PathVariable(value = "valueIncrement") Long valueIncrement){
+    @RequestMapping(path = "/{pseudo}/luck", method = RequestMethod.PUT)
+    public void incrementLuckCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "valueIncrement") Long valueIncrement){
         charactergameService.updateIncrementLuckCharacter(pseudo, valueIncrement);
     }
 

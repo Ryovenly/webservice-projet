@@ -42,7 +42,7 @@ class ProfilCharacterActivity: BaseActivity() {
         firebaseStore = FirebaseStorage.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
 
-        getCharacter()
+//        getCharacter()
         setViewListener()
     }
 
@@ -58,21 +58,21 @@ class ProfilCharacterActivity: BaseActivity() {
     }
 
 
-    private fun getCharacter() {
-        CharacterHelper.getCharacter(user?.uid)
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null) {
-                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
-                    attributesCharacter()
-
-                } else {
-                    Log.d("TAG", "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "get failed with ", exception)
-            }
-    }
+//    private fun getCharacter() {
+//        CharacterHelper.getCharacter(user?.uid)
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot != null) {
+//                    modelCharacter = documentSnapshot.toObject(Character::class.java)!!
+//                    attributesCharacter()
+//
+//                } else {
+//                    Log.d("TAG", "No such document")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("TAG", "get failed with ", exception)
+//            }
+//    }
 
 
     @SuppressLint("SetTextI18n")
@@ -121,9 +121,9 @@ class ProfilCharacterActivity: BaseActivity() {
             filePath = data.data
             uploadImage()
 
-            pathData = dataEmp + filePathDatabase
-
-            CharacterHelper.updateImage(user?.uid, pathData)
+//            pathData = dataEmp + filePathDatabase
+//
+//            CharacterHelper.updateImage(user?.uid, pathData)
 
             try {
                 val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
