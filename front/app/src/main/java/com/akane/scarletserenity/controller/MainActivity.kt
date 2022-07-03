@@ -77,19 +77,6 @@ class MainActivity : BaseActivity() {
         // reNovation by airtone (c) copyright 2019 Licensed under a Creative Commons Attribution (3.0) license. http://dig.ccmixter.org/files/airtone/60674
 
 
-        // crash test
-//        val crashButton = Button(this)
-//        crashButton.text = "Crash!"
-//        crashButton.setOnClickListener {
-//            throw RuntimeException("Test Crash") // Force a crash
-//        }
-
-
-//        addContentView(crashButton, ViewGroup.LayoutParams(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT))
-
-
 // Create and launch sign-in intent
 
         mBtLogin.setOnClickListener {
@@ -108,42 +95,6 @@ class MainActivity : BaseActivity() {
 
     }
 
-
-
-//    private fun createUserInFirestore(){
-//
-//        val uid = this.user?.uid
-//        val username = this.user?.displayName
-//
-//        UserHelper.createUser(uid, username)
-//        Log.d("ça marche", "Utilisateur créé")
-//
-//    }
-
-    private fun startSignInActivity(){
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build())
-
-        startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build(),
-            RC_SIGN_IN)
-    }
-
-        companion object {
-
-            private const val RC_SIGN_IN = 123
-        }
-
-    private fun checkCurrentUser(): Boolean {
-        // [START check_current_user]
-        val user = Firebase.auth.currentUser
-        return user != null
-        // [END check_current_user]
-    }
 
     private fun startCharacterActivity() {
         val intent = Intent(this, CharacterActivity::class.java)
@@ -174,21 +125,6 @@ class MainActivity : BaseActivity() {
 
         builder.setView(linearLayout)
 
-//        val client =  OkHttpClient.Builder()
-//          //  .addInterceptor(BasicAuthInterceptor(newPseudo.text.toString(), newPassword.text.toString()))
-//            .build()
-//
-//        val gson = GsonBuilder()
-//            .setLenient()
-//            .create();
-//
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl("192.168.0.23:8080")
-//            .client(client)
-//            .addConverterFactory(GsonConverterFactory.create(gson))
-//            .build()
-
-
 // Set up the buttons
         builder.setPositiveButton("Créer", DialogInterface.OnClickListener { dialog, which ->
             // Here you get get input text from the Edittext
@@ -209,6 +145,11 @@ class MainActivity : BaseActivity() {
 
         try {
             var user = User(username,password,"USER")
+
+            if (editTextUrl.text.toString() != ""){
+                url = "http://" + editTextUrl.text.toString()
+            }
+
             val response = ApiClient.apiService.createUser(user)
 
             if (response.isSuccessful && response.body() != null) {
@@ -247,6 +188,11 @@ class MainActivity : BaseActivity() {
     suspend fun loadProfile(username:String, password:String) {
 
         try {
+
+            if (editTextUrl.text.toString() != ""){
+                url = "http://" + editTextUrl.text.toString()
+            }
+            
             val response = BasicAuthClient<ApiUserService>(username, password).create(ApiUserService::class.java).getUserByUsername(username)
 
             if (response.isSuccessful && response.body() != null) {

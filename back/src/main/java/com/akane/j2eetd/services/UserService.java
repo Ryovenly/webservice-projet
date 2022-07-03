@@ -1,6 +1,7 @@
 package com.akane.j2eetd.services;
 
 import com.akane.j2eetd.entities.User;
+import com.akane.j2eetd.exceptions.ResourceNotFormatException;
 import com.akane.j2eetd.exceptions.ResourceNotFoundException;
 import com.akane.j2eetd.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,14 +49,22 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public User create(User user) {
-        if (StringUtils.isNotEmpty(user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-        logger.info("Saving user... {}", user.getUsername());
-        return userRepository.save(user);
-    }
+    @ApiResponse(responseCode = "400", description = "Utilisateur pas au bon format")
+    public User create(User user) throws ResourceNotFormatException {
+        try{
+            if (StringUtils.isNotEmpty(user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
 
+            logger.info("Saving user... {}", user.getUsername());
+            return userRepository.save(user);
+
+        }catch(Exception e){
+            throw new ResourceNotFormatException(User.class);
+        }
+
+
+    }
 
     @Operation(summary = "Récupération d'un utilisateur à partir de son identifiant")
     @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
@@ -69,18 +78,6 @@ public class UserService implements UserDetailsService {
         throw new ResourceNotFoundException(User.class, username);
     }
 
-//    @Operation(summary = "Récupération d'un utilisateur à partir de son firstName")
-//    @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
-//    @RolesAllowed("ROLE_ADMIN")
-//    public User getUserByFirstName(String firstName) throws ResourceNotFoundException {
-//        Optional<User> user = Optional.ofNullable(userRepository.findByFirstName(firstName));
-//        if (user.isPresent()) {
-//            return user.get();
-//        }
-//        throw new ResourceNotFoundException(User.class, firstName);
-//    }
-
-
     @RolesAllowed({ "ROLE_ADMIN" })
     public List<User> getAllUsers() {
         logger.info("Get all user ");
@@ -88,12 +85,17 @@ public class UserService implements UserDetailsService {
     }
 
     @RolesAllowed("ROLE_ADMIN")
-    public void deleteUser(String username) {
-        logger.info("Deleted user... {}", username);
-        userRepository.deleteById(username);
+    @ApiResponse(responseCode = "404", description = "Utilisateur existe pas")
+    public void deleteUser(String username) throws ResourceNotFoundException {
+        try{
+            userRepository.deleteById(username);
+            logger.info("Deleted user... {}", username);
+        }catch(Exception e){
+            throw new ResourceNotFoundException(User.class, username);
+        }
     }
 
-    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+    @RolesAllowed({ "ROLE_ADMIN"})
     public Page<User> getUsersWithPaging(Pageable pageable) {
         logger.info("Get all user with paging");
         return userRepository.findAll(pageable);

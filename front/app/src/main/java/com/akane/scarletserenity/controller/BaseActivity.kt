@@ -30,6 +30,9 @@ open class BaseActivity: AppCompatActivity(),TextToSpeech.OnInitListener {
     lateinit var tts:TextToSpeech
 
     companion object{
+
+        var url = "http://192.168.99.105:8080"
+
         lateinit var currentUsername:String
         lateinit var currentPassword:String
 

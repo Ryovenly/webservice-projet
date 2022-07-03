@@ -1,5 +1,6 @@
 package com.akane.scarletserenity.service
 
+import com.akane.scarletserenity.controller.BaseActivity.Companion.url
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -19,7 +20,7 @@ object ApiClient {
 
     private val retrofit : Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(url)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -1,6 +1,7 @@
 package com.akane.j2eetd.controllers;
 
 import com.akane.j2eetd.entities.User;
+import com.akane.j2eetd.exceptions.ResourceNotFormatException;
 import com.akane.j2eetd.exceptions.ResourceNotFoundException;
 import com.akane.j2eetd.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,18 +25,13 @@ public class UserController {
         return userService.getUserById(username);
     }
 
-//    @RequestMapping(path = "?firstName={firstName}", method = RequestMethod.GET)
-//    public User getByFirstName(@PathVariable(name = "firstName") String firstName) throws ResourceNotFoundException {
-//        return userService.getUserByUsername(firstName);
-//    }
-
     @RequestMapping(method = RequestMethod.PUT)
     public User update(@RequestBody @Valid User user) {
         return userService.update(user);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public User create(@RequestBody @Valid User user) {
+    public User create(@RequestBody @Valid User user) throws ResourceNotFormatException {
         return userService.create(user);
     }
 
@@ -46,7 +42,7 @@ public class UserController {
 
     @Operation(summary = "Suppression d'un utilisateur à partir de son identifiant")
     @RequestMapping(path = "/{username}", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable(value = "username") String username) {
+    public void deleteUser(@PathVariable(value = "username") String username) throws ResourceNotFoundException {
         userService.deleteUser(username);
     }
 

@@ -1,5 +1,6 @@
 package com.akane.scarletserenity.service
 
+import com.akane.scarletserenity.controller.BaseActivity.Companion.url
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -16,7 +17,7 @@ class BasicAuthClient<T>(var username:String?, var password:String?) {
         .create();
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.99.105:8080")
+        .baseUrl(url)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
