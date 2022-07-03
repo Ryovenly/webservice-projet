@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_character.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
 
 class CharacterActivity : BaseActivity()  {
@@ -137,9 +138,7 @@ class CharacterActivity : BaseActivity()  {
 
                 modelCharacter = content!!
 
-                val response2 = BasicAuthClient<ApiCharacterGameService>(username, password).create(ApiCharacterGameService::class.java).incrementHpMaxCharacter(modelCharacter.pseudo!!, 2)
-
-                Log.e("test", response2?.message())
+                BasicAuthClient<ApiCharacterGameService>(username, password).create(ApiCharacterGameService::class.java).lastLoginCharacter(currentPseudo,LocalDateTime.now().toString())
 
                 // go Menu character Activity
                 val ava = R.drawable.female_1

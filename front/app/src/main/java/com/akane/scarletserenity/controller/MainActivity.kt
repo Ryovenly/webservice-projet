@@ -192,7 +192,7 @@ class MainActivity : BaseActivity() {
             if (editTextUrl.text.toString() != ""){
                 url = "http://" + editTextUrl.text.toString()
             }
-            
+
             val response = BasicAuthClient<ApiUserService>(username, password).create(ApiUserService::class.java).getUserByUsername(username)
 
             if (response.isSuccessful && response.body() != null) {

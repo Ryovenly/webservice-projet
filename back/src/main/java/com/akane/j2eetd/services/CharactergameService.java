@@ -237,4 +237,17 @@ public class CharactergameService {
         throw new ResourceNotFoundException(Charactergame.class, pseudo);
     }
 
+    @RolesAllowed({ "ROLE_ADMIN", "ROLE_USER" })
+    @ApiResponse(responseCode = "404", description = "Charactergame existe pas")
+    public void updateLastLoginCharacter(String pseudo, String datetime) throws ResourceNotFoundException {
+        getCharactergameByPseudo(pseudo);
+        Optional<Charactergame> charactergame = Optional.ofNullable(charactergameRepository.findById(pseudo).orElse(null));
+        if (charactergame.isPresent()) {
+            logger.info("Update lastlogin {} by {}", pseudo, datetime);
+            charactergameRepository.lastLoginCharacter(pseudo, datetime);
+            return;
+        }
+        throw new ResourceNotFoundException(Charactergame.class, pseudo);
+    }
+
 }

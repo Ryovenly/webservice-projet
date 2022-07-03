@@ -7,12 +7,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.akane.scarletserenity.R
 import com.akane.scarletserenity.controller.BaseActivity
 import com.akane.scarletserenity.model.GlideApp
 import com.akane.scarletserenity.model.character.Character
 import com.akane.scarletserenity.model.character.CharacterHelper
+import com.akane.scarletserenity.model.webservice.CharacterGame
+import com.akane.scarletserenity.service.ApiCharacterGameService
+import com.akane.scarletserenity.service.BasicAuthClient
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ktx.Firebase
@@ -21,12 +26,14 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.activity_profil_character.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.*
 
 class ProfilCharacterActivity: BaseActivity() {
 
-    lateinit var modelCharacter: Character
+    lateinit var modelCharacter: CharacterGame
 
     private val PICK_IMAGE_REQUEST = 71
     private var filePath: Uri? = null
@@ -42,6 +49,12 @@ class ProfilCharacterActivity: BaseActivity() {
         firebaseStore = FirebaseStorage.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
 
+
+        runBlocking {
+            launch {
+                loadProfile(currentUsername, currentPassword)
+            }
+        }
 //        getCharacter()
         setViewListener()
     }
@@ -73,6 +86,46 @@ class ProfilCharacterActivity: BaseActivity() {
 //                Log.d("TAG", "get failed with ", exception)
 //            }
 //    }
+
+    suspend fun loadProfile(username:String, password:String) {
+
+        try {
+            val response = BasicAuthClient<ApiCharacterGameService>(username, password).create(
+                ApiCharacterGameService::class.java).getCharacterGameByUser(username)
+
+
+            if (response.isSuccessful && response.body() != null) {
+                val content = response.body()
+                Log.e("test", content?.pseudo)
+
+                modelCharacter = content!!
+
+                attributesCharacter()
+
+
+
+                //do something
+            } else {
+
+                Log.e("error", response.message())
+                Toast.makeText(
+                    this@ProfilCharacterActivity,
+                    "Erreur",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        } catch (e: Exception) {
+            Log.e("error", e.message)
+
+            Toast.makeText(
+                this@ProfilCharacterActivity,
+                "Erreur",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+    }
 
 
     @SuppressLint("SetTextI18n")

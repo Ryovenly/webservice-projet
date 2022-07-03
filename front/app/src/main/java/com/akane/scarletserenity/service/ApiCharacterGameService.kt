@@ -58,4 +58,7 @@ interface ApiCharacterGameService {
     @PUT("charactergames/{pseudo}/luck")
     suspend fun incrementLuckCharacter(@Path("pseudo") num: String, @Query("valueIncrement") valueIncrement :Int) :Response<Unit>
 
+    @PUT("charactergames/{pseudo}/lastlogin")
+    suspend fun lastLoginCharacter(@Path("pseudo") num: String, @Query("datetime") datetime :String) :Response<Unit>
+
 }

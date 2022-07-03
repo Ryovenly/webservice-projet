@@ -82,6 +82,11 @@ public interface CharactergameRepository extends JpaRepository<Charactergame,Str
     @Query("update Charactergame c set c.luck = c.luck + ?2 where c.pseudo = ?1")
     void incrementLuckCharacter(String pseudo, Long valueIncrement);
 
+    @Transactional
+    @Modifying
+    @Query("update Charactergame c set c.lastLogin = ?2 where c.pseudo = ?1")
+    void lastLoginCharacter(String pseudo, String datetime);
+
 
     /// Test pour faire une query universelle mais ne fonctionne pas que ce soit en native ou en SPel
 

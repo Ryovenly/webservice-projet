@@ -131,4 +131,10 @@ public class CharactergameController {
         charactergameService.updateIncrementLuckCharacter(pseudo, valueIncrement);
     }
 
+    @Operation(summary = "Ajoute lastlogin du personnage")
+    @RequestMapping(path = "/{pseudo}/lastlogin", method = RequestMethod.PUT)
+    public void lastLoginCharacter(@PathVariable(value = "pseudo") String pseudo, @RequestParam(value = "datetime") String datetime) throws ResourceNotFoundException {
+        charactergameService.updateLastLoginCharacter(pseudo, datetime);
+    }
+
 }
